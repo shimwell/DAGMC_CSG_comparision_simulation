@@ -1,17 +1,10 @@
-<!-- [![CI with install](https://github.com/shimwell/cad-to-dagmc-to-openmc-example/actions/workflows/ci_with_install.yml/badge.svg)](https://github.com/shimwell/cad-to-dagmc-to-openmc-example/actions/workflows/ci_with_install.yml) -->
-
-This example simulates a simplified model of an inertial confinement fusion reactor.
 
 
-This example simulates a 90 degree sector model of a fusion reactor with
-reflecting surfaces.
+This example simulates a simplified model of an inertial confinement fusion reactor using two different neutronics geometries method.
 
 - A CAD model is made and automatically converted to a DAGMC geometry that is then used in OpenMC for a neutronics simulation.
-- The neutronics simulation obtains the tritium breeding ratio and a 3D map of tritium production.
-- The simulation outputs are post processed to display the results and produce a VTK file for visualization.
+- A Constructive Solid Geometry (CSG) is made made in OpenMC and used for a neutronics simulation directly.
 
-
-:point_right: :video_camera: [Link to video tutorial for this repository](https://youtu.be/QKTZpplFTw8) :video_camera:
 
 # Prerequisites
 
@@ -43,19 +36,15 @@ conda activate env_cad
 
 Then run the script for making the DAGMC model.
 ```bash
-python 1_creation_of_dagmc_geometry.py
+python create_dagmc_geometry.py
 ```
-
-Then open the ```dagmc.html``` file in an internet browser to view the CAD created
-
-![CAD geometry image](https://github.com/Shimwell/fusion_example_for_openmc_using_paramak/blob/main/reactor.png?raw=true)
 
 Optionally you can inspect the DAGMC file at this stage by converting the h5m file to a vtk file and opening this with [Paraview](https://www.paraview.org/)
 ```
 mbconvert dagmc.h5m dagmc.vtk
 paraview dagmc.vtk
 ```
-![DAGMC model image](https://user-images.githubusercontent.com/8583900/159941242-9d57e55d-e800-4bdb-81eb-9085eae70960.png)
+![DAGMC model image](https://user-images.githubusercontent.com/8583900/159698979-3665e14b-ca42-4df2-8a1e-deee6597efc0.png)
 
 # Simulating the model in OpenMC
 
@@ -66,12 +55,14 @@ conda env create -f environment_neutronics.yml
 conda activate env_neutronics
 ```
 
-Then run the simulation which will produce a statepoint.10.h5 file that contains the simulation outputs
+Then run the DAGMC simulation which will produce a statepoint.10.h5 file that contains the simulation outputs.
 ```bash
-python 2_run_openmc_dagmc_simulation.py
+python openmc_simulation_with_dagmc_geometry.py
 ```
 
-Then run the post processing script that should output the Tritium Breeding Ratio to the terminal and make a VTK showing the neutron interactions resulting in tritium production
+Then run the CSG simulation which will produce a statepoint.10.h5 file that contains the simulation outputs.
 ```bash
-python 3_extract_results.py
+python openmc_simulation_with_csg_geometry.py
 ```
+
+
