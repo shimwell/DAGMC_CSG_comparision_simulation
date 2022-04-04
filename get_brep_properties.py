@@ -1,3 +1,4 @@
+import brep_part_finder as bpf
 import paramak
 
 # makes a mode of a reactor with a rotation angle of 360 and default parameters elsewhere
@@ -15,8 +16,9 @@ my_reactor = paramak.FlfSystemCodeReactor(
     lower_vv_thickness = 10.,
 )
 
+my_reactor.export_brep('my_brep_file.brep')
 
-# creates a dagmc h5m file of the geometry with material tags automatically assigned
-# exports the mesh in several sizes.
-for mesh_size in [100, 10, 1, 0.1]:
-    my_reactor.export_dagmc_h5m(filename=f"dagmc_{mesh_size}.h5m", min_mesh_size=mesh_size, max_mesh_size=mesh_size)
+
+my_brep_part_properties = bpf.get_brep_part_properties('my_brep_file.brep')
+
+print(my_brep_part_properties)
