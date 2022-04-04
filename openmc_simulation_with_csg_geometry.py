@@ -3,7 +3,7 @@ import neutronics_material_maker as nmm
 import openmc
 import openmc_data_downloader as odd
 import math
-
+import json
 
 
 # def run_neutronics_model(
@@ -24,20 +24,18 @@ simulation_batches = 10
 simulation_particles_per_batch = 1000
 fractional_height_of_source = 0.5
 
-blanket_material = 'Li'
-vessel_material='Iron'
 
-mat_blanket = nmm.Material.from_library(
-    name=blanket_material,
-    temperature=400,  # TODO expose temperatue to user args
-    temperature_to_neutronics_code=False,
-).openmc_material
+mat_vessel = openmc.Material(name="vacuum_vessel")
+mat_vessel.add_element("Fe", 89, "ao")
+mat_vessel.add_element("Cr", 9.1, "ao")
+mat_vessel.add_element("Mo", 1, "ao")
+mat_vessel.add_element("Mn", 0.5, "ao")
+mat_vessel.add_element("Si", 0.4, "ao")
+mat_vessel.set_density("g/cm3", 7.96)
 
-mat_vessel = nmm.Material.from_library(
-    name=vessel_material,
-    temperature=400,  # TODO expose temperatue to user args
-    temperature_to_neutronics_code=False
-).openmc_material
+mat_blanket = openmc.Material(name="upper_blanket")
+mat_blanket.add_element("Li", 1, "ao")
+mat_blanket.set_density("g/cm3", 0.46721185)
 
 materials = openmc.Materials([mat_blanket, mat_vessel])
 

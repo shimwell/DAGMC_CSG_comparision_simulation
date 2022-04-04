@@ -17,4 +17,6 @@ my_reactor = paramak.FlfSystemCodeReactor(
 
 
 # creates a dagmc h5m file of the geometry with material tags automatically assigned
-my_reactor.export_dagmc_h5m(filename="dagmc.h5m", min_mesh_size=5, max_mesh_size=20)
+# exports the mesh in several sizes.
+for mesh_size in [100, 10, 1, 0.1]:
+    my_reactor.export_dagmc_h5m(filename=f"dagmc_{mesh_size}.h5m", min_mesh_size=mesh_size, max_mesh_size=mesh_size)

@@ -1,47 +1,59 @@
 
 
+from unittest import result
 import openmc
 import openmc_data_downloader as odd
+import json
+
+
+mesh_size =10 # [100, 10, 1, 0.1]:
+
+blanket_thickness = 70.
+blanket_height = 500.
+lower_blanket_thickness = 50.
+vv_thickness = 10.
+lower_vv_thickness = 10.
+fractional_height_of_source = 0.5
 
 
 # Names of material tags can be found with the command line tool
 # mbsize -ll dagmc.h5m | grep 'NAME = mat:'
 
-rotation_angle=360
-inner_blanket_radius = 100.
-blanket_thickness = 70.
-blanket_height = 500.
-lower_blanket_thickness = 50.
-upper_blanket_thickness = 40.
-blanket_vv_gap = 20.
-upper_vv_thickness = 10.
-vv_thickness = 10.
-lower_vv_thickness = 10.
-fractional_height_of_source = 0.5
-
 mat_vacuum_vessel = openmc.Material(name="vacuum_vessel")
-mat_vacuum_vessel.add_element("Fe", 1, "ao")
-mat_vacuum_vessel.set_density("g/cm3", 7.7)
+mat_vacuum_vessel.add_element("Fe", 89, "ao")
+mat_vacuum_vessel.add_element("Cr", 9.1, "ao")
+mat_vacuum_vessel.add_element("Mo", 1, "ao")
+mat_vacuum_vessel.add_element("Mn", 0.5, "ao")
+mat_vacuum_vessel.add_element("Si", 0.4, "ao")
+mat_vacuum_vessel.set_density("g/cm3", 7.96)
 
 mat_upper_blanket = openmc.Material(name="upper_blanket")
 mat_upper_blanket.add_element("Li", 1, "ao")
-mat_upper_blanket.set_density("g/cm3", 0.5)
+mat_upper_blanket.set_density("g/cm3", 0.46721185)
 
 mat_lower_blanket = openmc.Material(name="lower_blanket")
 mat_lower_blanket.add_element("Li", 1, "ao")
-mat_lower_blanket.set_density("g/cm3", 0.5)
+mat_lower_blanket.set_density("g/cm3", 0.46721185)
 
 mat_lower_vacuum_vessel = openmc.Material(name="lower_vacuum_vessel")
-mat_lower_vacuum_vessel.add_element("Fe", 1, "ao")
-mat_lower_vacuum_vessel.set_density("g/cm3", 7.7)
+mat_lower_vacuum_vessel.add_element("Fe", 89, "ao")
+mat_lower_vacuum_vessel.add_element("Cr", 9.1, "ao")
+mat_lower_vacuum_vessel.add_element("Mo", 1, "ao")
+mat_lower_vacuum_vessel.add_element("Mn", 0.5, "ao")
+mat_lower_vacuum_vessel.add_element("Si", 0.4, "ao")
+mat_lower_vacuum_vessel.set_density("g/cm3", 7.96)
 
 mat_upper_vacuum_vessel = openmc.Material(name="upper_vacuum_vessel")
-mat_upper_vacuum_vessel.add_element("Fe", 1, "ao")
-mat_upper_vacuum_vessel.set_density("g/cm3", 7.7)
+mat_upper_vacuum_vessel.add_element("Fe", 89, "ao")
+mat_upper_vacuum_vessel.add_element("Cr", 9.1, "ao")
+mat_upper_vacuum_vessel.add_element("Mo", 1, "ao")
+mat_upper_vacuum_vessel.add_element("Mn", 0.5, "ao")
+mat_upper_vacuum_vessel.add_element("Si", 0.4, "ao")
+mat_upper_vacuum_vessel.set_density("g/cm3", 7.96)
 
 mat_blanket = openmc.Material(name="blanket")
 mat_blanket.add_element("Li", 1, "ao")
-mat_blanket.set_density("g/cm3", 0.5)
+mat_blanket.set_density("g/cm3", 0.46721185)
 
 materials = openmc.Materials(
     [
@@ -61,7 +73,7 @@ odd.just_in_time_library_generator(
 )
 
 # makes use of the dagmc geometry
-dag_univ = openmc.DAGMCUniverse("dagmc.h5m")
+dag_univ = openmc.DAGMCUniverse(f"dagmc_{mesh_size}.h5m")
 
 # creates an edge of universe boundary
 vac_surf = openmc.Sphere(r=10000, surface_id=9999, boundary_type="vacuum")
@@ -128,6 +140,8 @@ sp = openmc.StatePoint("statepoint.10.h5")
 
 # access the tally using pandas dataframes
 
+results_dict = {}
+
 for material in [
     mat_vacuum_vessel,
     mat_upper_blanket,
@@ -138,10 +152,12 @@ for material in [
 
     flux_tally = sp.get_tally(name=f"flux_{material.name}")
     
-
+    tally_result = flux_tally.mean.sum()
     # print cell tally results
-    print(f"{material.name} = {flux_tally.mean.sum()}")
+    print(f"{material.name} = {tally_result}")
     # print(f"{flux_tally.std_dev}")
+    
+    results_dict[material.name] = tally_result
 
-
-
+with open(f'dagmc_results_{mesh_size}.json', 'w') as outfile:
+    json.dump(results_dict, outfile)
