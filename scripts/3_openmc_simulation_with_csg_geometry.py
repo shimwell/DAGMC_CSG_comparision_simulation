@@ -1,5 +1,4 @@
 
-import neutronics_material_maker as nmm
 import openmc
 import openmc_data_downloader as odd
 
@@ -16,7 +15,7 @@ vv_thickness = 10.
 lower_vv_thickness = 10.
 
 simulation_batches = 10
-simulation_particles_per_batch = 1000
+simulation_particles_per_batch = 10000
 fractional_height_of_source = 0.5
 
 

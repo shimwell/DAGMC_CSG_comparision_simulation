@@ -2,9 +2,9 @@
 import openmc
 import openmc_data_downloader as odd
 import json
+import os
 
 for mesh_size in [100, 10]:
-# mesh_size =10 # [100, 10, 1, 0.1]:
 
     blanket_thickness = 70.
     blanket_height = 500.
@@ -71,7 +71,7 @@ for mesh_size in [100, 10]:
     )
 
     # makes use of the dagmc geometry
-    dag_univ = openmc.DAGMCUniverse(f"dagmc_{mesh_size}.h5m")
+    dag_univ = openmc.DAGMCUniverse(f"dagmc_{mesh_size}_openmc.h5m")
 
     # creates an edge of universe boundary
     vac_surf = openmc.Sphere(r=10000, surface_id=9999, boundary_type="vacuum")
@@ -103,6 +103,8 @@ for mesh_size in [100, 10]:
     settings.inactive = 0
     settings.run_mode = "fixed source"
     settings.source = my_source
+    settings.summary = False
+    settings.output = {'summary': False}
 
 
     tallies = openmc.Tallies()
@@ -134,7 +136,7 @@ for mesh_size in [100, 10]:
 
 
     # open the results file
-    sp = openmc.StatePoint("statepoint.10.h5")
+    sp = openmc.StatePoint(f"statepoint.{settings.batches}.h5")
 
     # access the tally using pandas dataframes
 
@@ -157,6 +159,9 @@ for mesh_size in [100, 10]:
         
         results_dict[material.name] = tally_result
 
-    with open(f'dagmc_results_{mesh_size}.json', 'w') as outfile:
+    with open(f'openmc_dagmc_results_{mesh_size}.json', 'w') as outfile:
         json.dump(results_dict, outfile)
     
+
+    # todo use shuti package
+    os.system(f"mv statepoint.{settings.batches}.h5 statepoint.{mesh_size}_{settings.batches}.h5")
