@@ -2,13 +2,8 @@
 import neutronics_material_maker as nmm
 import openmc
 import openmc_data_downloader as odd
-import math
-import json
 
 
-# def run_neutronics_model(
-
-# ):
 
 inner_blanket_radius = 100.
 blanket_thickness = 70.
