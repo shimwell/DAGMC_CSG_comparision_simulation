@@ -41,7 +41,7 @@ python scripts/1_create_dagmc_geometry.py
 
 Optionally you can inspect the DAGMC file at this stage by converting the h5m file to a vtk file and opening this with [Paraview](https://www.paraview.org/). There should be several h5m made, this example command converts just one of them. The geometries made for Shift should have graveyards while the openmc one won't.
 ```
-mbconvert dagmc_1_openmc.h5m dagmc.vtk
+mbconvert dagmc_10_openmc.h5m dagmc_10_openmc.vtk
 paraview dagmc.vtk
 ```
 ![DAGMC model image](https://user-images.githubusercontent.com/8583900/159698979-3665e14b-ca42-4df2-8a1e-deee6597efc0.png)
@@ -55,12 +55,17 @@ conda env create -f environment_neutronics.yml
 conda activate env_neutronics
 ```
 
-Then run the DAGMC simulation which will produce a statepoint.10.h5 file that contains the simulation outputs.
+Make the DAGMC geometry
+```
+python scripts 1_create_dagmc_geometry.py
+```
+
+Then run the DAGMC simulation which will produce a statepoint file that contains the simulation outputs.
 ```bash
 python python scripts/2_openmc_simulation_with_dagmc_geometry.py
 ```
 
-Then run the CSG simulation which will produce a statepoint.10.h5 file that contains the simulation outputs.
+Then run the CSG simulation which will produce a statepoint file that contains the simulation outputs.
 ```bash
 python python scripts scripts/3_openmc_simulation_with_csg_geometry.py
 ```
