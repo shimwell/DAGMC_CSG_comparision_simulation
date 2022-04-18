@@ -26,6 +26,8 @@ jobs:
         # /examples subfolder so there is no overlap with these examples
         - name: build geometry
           run: |
+            conda env create -f environment_cad.yml
+            conda activate env_cad
             cd scripts
             python 1_create_dagmc_geometry.py
 
