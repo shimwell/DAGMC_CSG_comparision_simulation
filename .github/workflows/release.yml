@@ -1,0 +1,51 @@
+
+# This yml file will trigger a Github Action on release creation.
+# This Action will build and upload a dagmc file to the release
+
+name: release
+
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+jobs:
+  upload_workflow_output_files_to_release:
+      needs: build_and_push_docker_images
+      runs-on: ubuntu-latest
+
+      name: 'create_files'
+
+      container:
+        image: continuumio/miniconda3:4.10.3
+
+      steps:
+        - uses: actions/checkout@v2
+
+        # the examples also appear on the docker image but they are in the
+        # /examples subfolder so there is no overlap with these examples
+        - name: build geometry
+          run: |
+            cd scripts
+            python 1_create_dagmc_geometry.py
+
+        - name: compress files
+          run: |
+            apt-get -y update
+            apt-get -y install zip
+            zip -r dagmc_h5m_files.zip scripts/*.h5m
+        - name: Upload artifact for CI
+          uses: actions/upload-artifact@v2
+          with:
+            name: dagmc_h5m_files.zip
+            path: dagmc_h5m_files.zip
+            if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
+
+        - name: Upload files into the release
+          uses: svenstaro/upload-release-action@v2
+          with:
+            overwrite: true
+            tag: ${{ github.ref }}
+            file: dagmc_h5m_files.zip
+            asset_name: dagmc_h5m_files.zip
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
