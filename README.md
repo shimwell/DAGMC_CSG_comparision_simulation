@@ -39,7 +39,7 @@ Then run the script for making the DAGMC model.
 python scripts/1_create_dagmc_geometry.py
 ```
 
-Optionally you can inspect the DAGMC file at this stage by converting the h5m file to a vtk file and opening this with [Paraview](https://www.paraview.org/). There should be several h5m made, this example command converts just one of them
+Optionally you can inspect the DAGMC file at this stage by converting the h5m file to a vtk file and opening this with [Paraview](https://www.paraview.org/). There should be several h5m made, this example command converts just one of them. The geometries made for Shift should have graveyards while the openmc one won't.
 ```
 mbconvert dagmc_1_openmc.h5m dagmc.vtk
 paraview dagmc.vtk

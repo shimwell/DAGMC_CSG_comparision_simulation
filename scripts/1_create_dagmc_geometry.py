@@ -28,7 +28,6 @@ for mesh_size in [100, 10]:
     )
 
     # makes the DAGMC geometry with tags suitable for Shift and with a graveyard
-    my_reactor.graveyard_size = 1400  # manually sets the graveyard size, centered around 0,0,0
     my_reactor.export_dagmc_h5m(
         filename=f"dagmc_{mesh_size}_shift.h5m",
         tags=[
@@ -40,7 +39,7 @@ for mesh_size in [100, 10]:
             "6",  # upper_vacuum_vessel
             "graveyard"
         ],
-        include_graveyard=True,
+        include_graveyard={'offset':10}, # manually sets the graveyard offset from the largest component
         min_mesh_size=mesh_size,
         max_mesh_size=mesh_size,
     )
