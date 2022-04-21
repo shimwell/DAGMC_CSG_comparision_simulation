@@ -32,14 +32,16 @@ for mesh_size in [100, 10]:
         filename=f"dagmc_{mesh_size}_shift.h5m",
         tags=[
             "1",  # blanket
-            "2",  # vacuum_vessel
+            "2",  # vessel
             "3",  # upper_blanket
             "4",  # lower_blanket
-            "5",  # lower_vacuum_vessel
-            "6",  # upper_vacuum_vessel
-            "graveyard"
+            "5",  # lower_vessel
+            "6",  # upper_vessel
+            "graveyard",
         ],
-        include_graveyard={'offset':10}, # manually sets the graveyard offset from the largest component
+        include_graveyard={
+            "offset": 10
+        },  # manually sets the graveyard offset from the largest component
         min_mesh_size=mesh_size,
         max_mesh_size=mesh_size,
     )
